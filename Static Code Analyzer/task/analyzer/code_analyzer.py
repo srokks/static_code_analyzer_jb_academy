@@ -1,24 +1,43 @@
 # write your code here
 # file_name = input()
+import re
 file_name = 'test_file.py'
 
 
 def check_line_lenght(line: str):
+    '''
+    Returns True if line is longer than 79
+    '''
     if len(line) > 79:
         return True
 
 
 def check_indentation(line):
-    pass
-
+    '''
+    Returns true if indentation in line is not a multiple of four; i
+    '''
+    i = 0
+    while True:
+        if line[i] == ' ':
+            i += 1
+        else:
+            break
+    if i == 0 or i % 4 == 0:
+        return False
+    else:
+        return True
 
 def check_spaces_before(line):
     pass
 
 
 def check_semicol_end(line):
-    pass
-
+    if '#' in line:
+        if line.split('#')[0].rstrip(' ')[-1] == ';':
+            return True
+    else:
+        if line.rstrip(' ')[-1] == ';':
+            return True
 
 def todo_found(line):
     pass
@@ -49,7 +68,8 @@ def check_for_errors(line: str):
 
 
 with open(file_name, 'r') as f:
-    for line_no, line in enumerate(f.readlines(), 1):
-        error_list = check_for_errors(line)
-        if len(error_list) > 0:
-            print(f"Line {line_no}:", error_list)
+    for line_no,line in enumerate(f.read().splitlines(),1):
+        if line != '':
+            error_list = check_for_errors(line)
+            if len(error_list) > 0:
+                print(f'Line {line_no}:{error_list}')
