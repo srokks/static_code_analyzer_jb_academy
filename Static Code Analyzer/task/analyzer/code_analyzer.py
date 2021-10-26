@@ -28,6 +28,9 @@ def check_indentation(line):
 
 
 def check_spaces_before_comment(line):
+    '''
+    Returns True if there's less than two spaces before inline comments
+    '''
     if "#" in line and line[0]!='#':
         line = line.split('#')[0]
         if line[-2:] != '  ':
@@ -49,20 +52,19 @@ def check_semicol_end(line):
 
 
 def todo_found(line):
+    '''
+    Returns True if #TODO: found
+    '''
     if '#' in line:
         line = line.split('#')[1].lower()
         if 'todo' in line:
             return True
 
 
-def check_blank_preciding(line):
-    error_list = []
-
-    error_list.append({'S006': "More than two blank lines used before this line"})
-    return error_list
-
-
 def check_for_errors(line: str, prev_blanks_error=False):
+    '''
+    Checks line for errors and returns errors_list
+    '''
     error_list = []
     if len(line) == 0:
         pass
@@ -82,6 +84,9 @@ def check_for_errors(line: str, prev_blanks_error=False):
     return error_list
 
 def print_errors(file_name):
+    '''
+    With given file_name checks py file for PEP errors
+    '''
     with open(file_name, 'r') as f:
         blank_counter = 0
         for line_no, line in enumerate(f.read().splitlines(), 1):
@@ -117,4 +122,3 @@ if __name__ == '__main__':
             files_list.append(path)
     for el in files_list:
         print_errors(el)
-    # print(files_list)
