@@ -94,11 +94,11 @@ def check_for_errors(line: str, prev_blanks_error=False):
     if len(line) == 0:
         pass
     else:
-        if check_line_lenght(line):
+        if check_line_length(line):
             error_list.append(['S001', 'Too long'])
         if check_indentation(line):
             error_list.append(['S002', 'Indentation is not a multiple of four;'])
-        if check_semicol_end(line):
+        if check_semicolon_end(line):
             error_list.append(['S003', 'Unnecessary semicolon'])
         if check_spaces_before_comment(line):
             error_list.append(['S004', 'Less than two spaces before inline comments'])
@@ -106,13 +106,18 @@ def check_for_errors(line: str, prev_blanks_error=False):
             error_list.append(['S005', 'TODO found'])
         if prev_blanks_error:
             error_list.append(['S006', 'More than two blank lines used before this line'])
-        if spaces_after_construction(line):
+        if spaces_after_class(line):
             error_list.append(['S007', "Too many spaces after 'class'"])
-        if class_camel_check(line):
-            error_list.append(['S008', 'Class name class_name should be written in CamelCase'])
-        if function_snake_check(line):
-            error_list.append(['S009', 'unction name function_name should be written in snake_case'])
+        if spaces_after_def(line):
+            error_list.append(['S007', "Too many spaces after 'def'"])
+        class_name = class_camel_check(line)
+        if class_name:
+            error_list.append(['S008', f"Class name '{class_name}' should use CamelCase"])
+        def_name = function_snake_check(line)
+        if def_name:
+            error_list.append(['S009', f"Function name '{def_name}' should use snake_case"])
     return error_list
+
 
 def print_errors(file_name):
     """
