@@ -1,4 +1,5 @@
 # write your code here
+import ast
 import re
 
 
@@ -61,20 +62,22 @@ def todo_found(line):
 
 
 def spaces_after_class(line):
-    if re.match('class',line):
-        if not re.match('class \w',line):
+    if re.match('class', line):
+        if not re.match('class \w', line):
             return True
 
-def spaces_after_def(line:str):
+
+def spaces_after_def(line: str):
     line = line.lstrip(' ')
-    if re.match('def',line):
-        if not re.match('def \w',line):
+    if re.match('def', line):
+        if not re.match('def \w', line):
             return True
+
 
 def class_camel_check(line):
-    if re.match('class',line):
+    if re.match('class', line):
         class_name = line[:-1].split()[-1]
-        if not re.match('^[A-Z][A-Za-z()]*',class_name):
+        if not re.match('^[A-Z][A-Za-z()]*', class_name):
             return class_name
 
 
@@ -82,7 +85,7 @@ def function_snake_check(line):
     line = line.lstrip(' ')
     if re.match('def', line):
         def_name = line.split(' ')[1]
-        if not re.match('^[a-z_][a-z_0-9]*.*$',def_name):
+        if not re.match('^[a-z_][a-z_0-9]*.*$', def_name):
             return def_name
 
 
@@ -116,6 +119,9 @@ def check_for_errors(line: str, prev_blanks_error=False):
         def_name = function_snake_check(line)
         if def_name:
             error_list.append(['S009', f"Function name '{def_name}' should use snake_case"])
+
+
+
     return error_list
 
 
@@ -141,15 +147,7 @@ def print_errors(file_name):
                 pass
 
 
-# file_name = input()
-# file_name = 'test1.py'  #DEBUG
-
-if __name__ == '__main__':
-    import sys
-    import os
-
-    args = sys.argv
-    path = args[1]
+def check_files(path):
     files_list = []
     if os.path.isdir(path):
         for el in sorted(os.listdir(path)):  # FIXME: without recursively scan
@@ -160,3 +158,34 @@ if __name__ == '__main__':
             files_list.append(path)
     for el in files_list:
         print_errors(el)
+
+
+def check_args_snake(file_name):
+    """
+    Returns list with line numbers where error occured
+    """
+    with open(file_name, 'r') as f:
+        script = f.read()
+    tree = ast.parse(script)
+    line_numbers = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.arg):
+            arg_name = node.arg
+            if not re.match('^[a-z_][a-z_0-9]*.*$', arg_name):
+                line_numbers.append({'line_no':node.lineno,'arg_name':arg_name})
+    return line_numbers
+
+
+# file_name = input()
+# file_name = 'test1.py'  #DEBUG
+
+
+if __name__ == '__main__':
+    import sys
+    import os
+
+    args = sys.argv
+    path = args[1]
+    check_files(path)
+    # a =check_args_snake('/Users/srokks/PycharmProjects/Static Code Analyzer/Static Code Analyzer/task/analyzer/tests/test.py')
+    # print(a)
