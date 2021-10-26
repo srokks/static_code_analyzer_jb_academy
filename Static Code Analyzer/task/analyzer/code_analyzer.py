@@ -60,6 +60,21 @@ def todo_found(line):
             return True
 
 
+def spaces_after_construction(line):
+    if re.match('class',line):
+        if not re.match('class \w',line):
+            return True
+
+def class_camel_check(line):
+    if re.match('class',line):
+        class_name = line[:-1].split()[-1]
+        if re.match('[A-Z]')
+
+
+def function_snake_check(line):
+    pass
+
+
 def check_for_errors(line: str, prev_blanks_error=False):
     """
     Checks line for errors and returns errors_list
@@ -80,6 +95,12 @@ def check_for_errors(line: str, prev_blanks_error=False):
             error_list.append(['S005', 'TODO found'])
         if prev_blanks_error:
             error_list.append(['S006', 'More than two blank lines used before this line'])
+        if spaces_after_construction(line):
+            error_list.append(['S007', "Too many spaces after 'class'"])
+        if class_camel_check(line):
+            error_list.append(['S008', 'Class name class_name should be written in CamelCase'])
+        if function_snake_check(line):
+            error_list.append(['S009', 'unction name function_name should be written in snake_case'])
     return error_list
 
 def print_errors(file_name):
