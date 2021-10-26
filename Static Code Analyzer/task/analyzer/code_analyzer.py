@@ -60,9 +60,15 @@ def todo_found(line):
             return True
 
 
-def spaces_after_construction(line):
+def spaces_after_class(line):
     if re.match('class',line):
         if not re.match('class \w',line):
+            return True
+
+def spaces_after_def(line:str):
+    line = line.lstrip(' ')
+    if re.match('def',line):
+        if not re.match('def \w',line):
             return True
 
 def class_camel_check(line):
