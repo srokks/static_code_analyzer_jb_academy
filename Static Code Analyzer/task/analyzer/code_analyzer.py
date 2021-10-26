@@ -2,19 +2,18 @@
 import re
 
 
-
-def check_line_lenght(line: str):
-    '''
+def check_line_length(line: str):
+    """
     Returns True if line is longer than 79
-    '''
+    """
     if len(line) > 79:
         return True
 
 
 def check_indentation(line):
-    '''
+    """
     Returns true if indentation in line is not a multiple of four; i
-    '''
+    """
     i = 0
     while True:
         if line[i] == ' ':
@@ -28,19 +27,19 @@ def check_indentation(line):
 
 
 def check_spaces_before_comment(line):
-    '''
+    """
     Returns True if there's less than two spaces before inline comments
-    '''
-    if "#" in line and line[0]!='#':
+    """
+    if "#" in line and line[0] != '#':
         line = line.split('#')[0]
         if line[-2:] != '  ':
             return True
 
 
-def check_semicol_end(line):
-    '''
+def check_semicolon_end(line):
+    """
     Returns True if code line ends with ;
-    '''
+    """
     if '#' in line and line[0] != '#':
         line = line.split('#')[0].rstrip(' ')
         if line[-1] == ';':
@@ -52,9 +51,9 @@ def check_semicol_end(line):
 
 
 def todo_found(line):
-    '''
+    """
     Returns True if #TODO: found
-    '''
+    """
     if '#' in line:
         line = line.split('#')[1].lower()
         if 'todo' in line:
@@ -62,9 +61,9 @@ def todo_found(line):
 
 
 def check_for_errors(line: str, prev_blanks_error=False):
-    '''
+    """
     Checks line for errors and returns errors_list
-    '''
+    """
     error_list = []
     if len(line) == 0:
         pass
@@ -84,9 +83,9 @@ def check_for_errors(line: str, prev_blanks_error=False):
     return error_list
 
 def print_errors(file_name):
-    '''
+    """
     With given file_name checks py file for PEP errors
-    '''
+    """
     with open(file_name, 'r') as f:
         blank_counter = 0
         for line_no, line in enumerate(f.read().splitlines(), 1):
@@ -104,19 +103,21 @@ def print_errors(file_name):
                     print(f'{file_name}: Line {line_no}: {err_code} {err_desc}')
                 pass
 
+
 # file_name = input()
 # file_name = 'test1.py'  #DEBUG
 
 if __name__ == '__main__':
     import sys
     import os
+
     args = sys.argv
     path = args[1]
     files_list = []
     if os.path.isdir(path):
-        for el in sorted(os.listdir(path)): # FIXME: without recoursive scan
+        for el in sorted(os.listdir(path)):  # FIXME: without recursively scan
             if el[-3:] == '.py':
-                files_list.append(path+'/'+el)
+                files_list.append(path + '/' + el)
     elif os.path.isfile(path):
         if path[-3:] == '.py':
             files_list.append(path)
