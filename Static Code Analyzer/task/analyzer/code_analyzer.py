@@ -78,7 +78,11 @@ def class_camel_check(line):
 
 
 def function_snake_check(line):
-    pass
+    line = line.lstrip(' ')
+    if re.match('def', line):
+        def_name = line.split(' ')[1]
+        if not re.match('^[a-z_][a-z_0-9]*.*$',def_name):
+            return def_name
 
 
 def check_for_errors(line: str, prev_blanks_error=False):
