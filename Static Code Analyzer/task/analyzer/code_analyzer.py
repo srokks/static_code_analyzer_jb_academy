@@ -74,7 +74,8 @@ def spaces_after_def(line:str):
 def class_camel_check(line):
     if re.match('class',line):
         class_name = line[:-1].split()[-1]
-        if re.match('[A-Z]')
+        if not re.match('^[A-Z][A-Za-z()]*',class_name):
+            return class_name
 
 
 def function_snake_check(line):
