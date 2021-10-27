@@ -75,7 +75,7 @@ def spaces_after_def(line: str):
 
 
 def class_camel_check(line):
-    #FIXME
+    # FIXME
     if re.match('class', line):
         class_name = line[:-1].split()[-1]
         if not re.match('^[A-Z][A-Za-z()]*', class_name):
@@ -83,7 +83,7 @@ def class_camel_check(line):
 
 
 def function_snake_check(line):
-    #Fixme
+    # Fixme
     line = line.lstrip(' ')
     if re.match('def', line):
         def_name = line.split(' ')[1]
@@ -95,7 +95,7 @@ def check_for_errors(line: str, prev_blanks_error=False):
     """
     Checks line for errors and returns errors_list
     """
-    #TODO: split check in check line by line and for checking
+    # TODO: split check in check line by line and for checking
     error_list = []
     if len(line) == 0:
         pass
@@ -149,14 +149,14 @@ def print_errors(file_name):
 
     argument_name_errors = check_args_snake(script)
     if argument_name_errors:
-        for line_no,arg_name in argument_name_errors:
+        for line_no, arg_name in argument_name_errors:
             # appends list in dict with line no key with new error
             error_dict[line_no].append(['S010', f"Argument name '{arg_name}' should be snake_case"])
     # ----
     # checks for variable snake_case error
     variable_name_errors = check_func_snake(script)
     if variable_name_errors:
-        for line_no,var_name in variable_name_errors:
+        for line_no, var_name in variable_name_errors:
             # appends list in dict with line no key with new error
             error_dict[line_no].append(['S011', f"Variable '{var_name}' in function should be snake_case"])
     # ----
@@ -167,10 +167,12 @@ def print_errors(file_name):
             error_dict[line_no].append(['S012', 'Default argument value is mutable'])
 
     # ----
-    #prints errors dict
-    for line_no,errors in error_dict.items():
-        for code,desc in errors:
+    # prints errors dict
+    for line_no, errors in error_dict.items():
+        for code, desc in errors:
             print(f"{file_name}: Line {line_no}: {code} {desc}")
+
+
 def check_files(path):
     files_list = []
     if os.path.isdir(path):
@@ -183,6 +185,7 @@ def check_files(path):
     for el in files_list:
         print_errors(el)
 
+
 def check_args_mutable(script):
     """
     Checks if theres mutable function argument in script
@@ -193,13 +196,14 @@ def check_args_mutable(script):
         tree = ast.parse(script)
         line_number = []
         for node in ast.walk(tree):
-            if isinstance(node,ast.arguments):
+            if isinstance(node, ast.arguments):
                 for el in ast.walk(node):
-                    if isinstance(el,(ast.List,ast.Dict,ast.Tuple)):
+                    if isinstance(el, (ast.List, ast.Dict, ast.Tuple)):
                         line_number.append(el.lineno)
         return set(line_number)
     except:
         pass
+
 
 def check_func_snake(script):
     """
@@ -220,6 +224,7 @@ def check_func_snake(script):
     except:
         pass
 
+
 def check_args_snake(script):
     """
     Returns list with line numbers where error occured
@@ -235,8 +240,6 @@ def check_args_snake(script):
         return line_numbers
     except:
         pass
-
-
 
 
 if __name__ == '__main__':
