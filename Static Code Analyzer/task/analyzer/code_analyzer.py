@@ -75,7 +75,6 @@ def spaces_after_def(line: str):
 
 
 def class_camel_check(line):
-    # FIXME
     if re.match('class', line):
         class_name = line[:-1].split()[-1]
         if not re.match('^[A-Z][A-Za-z()]*', class_name):
@@ -95,7 +94,6 @@ def check_for_errors(line: str, prev_blanks_error=False):
     """
     Checks line for errors and returns errors_list
     """
-    # TODO: split check in check line by line and for checking
     error_list = []
     if len(line) == 0:
         pass
@@ -176,7 +174,7 @@ def print_errors(file_name):
 def check_files(path):
     files_list = []
     if os.path.isdir(path):
-        for el in sorted(os.listdir(path)):  # FIXME: without recursively scan
+        for el in sorted(os.listdir(path)):
             if el[-3:] == '.py':
                 files_list.append(path + '/' + el)
     elif os.path.isfile(path):
