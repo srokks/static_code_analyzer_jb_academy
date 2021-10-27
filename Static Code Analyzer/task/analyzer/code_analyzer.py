@@ -75,6 +75,7 @@ def spaces_after_def(line: str):
 
 
 def class_camel_check(line):
+    #FIXME
     if re.match('class', line):
         class_name = line[:-1].split()[-1]
         if not re.match('^[A-Z][A-Za-z()]*', class_name):
@@ -82,6 +83,7 @@ def class_camel_check(line):
 
 
 def function_snake_check(line):
+    #Fixme
     line = line.lstrip(' ')
     if re.match('def', line):
         def_name = line.split(' ')[1]
@@ -93,6 +95,7 @@ def check_for_errors(line: str, prev_blanks_error=False):
     """
     Checks line for errors and returns errors_list
     """
+    #TODO: split check in check line by line and for checking
     error_list = []
     if len(line) == 0:
         pass
@@ -120,8 +123,6 @@ def check_for_errors(line: str, prev_blanks_error=False):
         if def_name:
             error_list.append(['S009', f"Function name '{def_name}' should use snake_case"])
 
-
-
     return error_list
 
 
@@ -129,24 +130,40 @@ def print_errors(file_name):
     """
     With given file_name checks py file for PEP errors
     """
+    error_dict = {}
     with open(file_name, 'r') as f:
         blank_counter = 0
-        for line_no, line in enumerate(f.read().splitlines(), 1):
+        script = f.read()
+        error_dict = {}
+        for line_no, line in enumerate(script.splitlines(), 1):
             if blank_counter > 2 and line != '':
-                error_list = check_for_errors(line, True)
+                error_list = check_for_errors(line, True)  #
             else:
                 error_list = check_for_errors(line, False)
             if line == '':
                 blank_counter += 1
             else:
                 blank_counter = 0
+            line_errors = {line_no: error_list}
+            error_dict.update(line_errors)
 
-            if len(error_list) > 0:
-                for err_code, err_desc in error_list:
-                    print(f'{file_name}: Line {line_no}: {err_code} {err_desc}')
-                pass
-
-
+    argument_name_errors = check_args_snake(script)
+    if argument_name_errors:
+        for line_no,arg_name in argument_name_errors:
+            # appends list in dict with line no key with new error
+            error_dict[line_no].append(['S010', f"Argument name '{arg_name}' should be snake_case"])
+    # ----
+    # checks for variable snake_case error
+    variable_name_errors = check_func_snake(script)
+    if variable_name_errors:
+        for line_no,var_name in variable_name_errors:
+            # appends list in dict with line no key with new error
+            error_dict[line_no].append(['S011', f"Variable '{var_name}' in function should be snake_case"])
+    # ----
+    # prints errors dict
+    for line_no,errors in error_dict.items():
+        for code,desc in errors:
+            print(f"{file_name}: Line {line_no}: {code} {desc}")
 def check_files(path):
     files_list = []
     if os.path.isdir(path):
@@ -159,25 +176,44 @@ def check_files(path):
     for el in files_list:
         print_errors(el)
 
+def check_args_mutable(script)
 
-def check_args_snake(file_name):
+def check_func_snake(script):
+    """
+        Returns list with line numbers where error occured
+    """
+
+    try:
+        tree = ast.parse(script)
+        line_numbers = []
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef):
+                for el in ast.walk(node):
+                    if isinstance(el, ast.Assign):
+                        var_name = el.targets[0].id
+                        if not re.match('^[a-z_][a-z_0-9]*.*$', var_name):
+                            line_numbers.append([el.lineno, var_name])
+        return line_numbers
+    except:
+        pass
+
+def check_args_snake(script):
     """
     Returns list with line numbers where error occured
     """
-    with open(file_name, 'r') as f:
-        script = f.read()
-    tree = ast.parse(script)
-    line_numbers = []
-    for node in ast.walk(tree):
-        if isinstance(node, ast.arg):
-            arg_name = node.arg
-            if not re.match('^[a-z_][a-z_0-9]*.*$', arg_name):
-                line_numbers.append({'line_no':node.lineno,'arg_name':arg_name})
-    return line_numbers
+    try:
+        tree = ast.parse(script)
+        line_numbers = []
+        for node in ast.walk(tree):
+            if isinstance(node, ast.arg):
+                arg_name = node.arg
+                if not re.match('^[a-z_][a-z_0-9]*.*$', arg_name):
+                    line_numbers.append([node.lineno, arg_name])
+        return line_numbers
+    except:
+        pass
 
 
-# file_name = input()
-# file_name = 'test1.py'  #DEBUG
 
 
 if __name__ == '__main__':
@@ -189,3 +225,4 @@ if __name__ == '__main__':
     check_files(path)
     # a =check_args_snake('/Users/srokks/PycharmProjects/Static Code Analyzer/Static Code Analyzer/task/analyzer/tests/test.py')
     # print(a)
+    #
