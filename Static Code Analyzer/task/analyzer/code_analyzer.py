@@ -160,7 +160,14 @@ def print_errors(file_name):
             # appends list in dict with line no key with new error
             error_dict[line_no].append(['S011', f"Variable '{var_name}' in function should be snake_case"])
     # ----
-    # prints errors dict
+    # checks if func arguments are mutable
+    mutable_line_no_errors = check_args_mutable(script)
+    if mutable_line_no_errors:
+        for line_no in mutable_line_no_errors:
+            error_dict[line_no].append(['S012', 'Default argument value is mutable'])
+
+    # ----
+    #prints errors dict
     for line_no,errors in error_dict.items():
         for code,desc in errors:
             print(f"{file_name}: Line {line_no}: {code} {desc}")
@@ -176,7 +183,23 @@ def check_files(path):
     for el in files_list:
         print_errors(el)
 
-def check_args_mutable(script)
+def check_args_mutable(script):
+    """
+    Checks if theres mutable function argument in script
+    :return: line_no lists
+    """
+    try:
+        tree = ast.parse(script)
+        tree = ast.parse(script)
+        line_number = []
+        for node in ast.walk(tree):
+            if isinstance(node,ast.arguments):
+                for el in ast.walk(node):
+                    if isinstance(el,(ast.List,ast.Dict,ast.Tuple)):
+                        line_number.append(el.lineno)
+        return set(line_number)
+    except:
+        pass
 
 def check_func_snake(script):
     """
